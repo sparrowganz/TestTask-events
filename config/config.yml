@@ -1,4 +1,4 @@
-app: main
+app: web
 server:
   port: 8080
   readTimeout: 5s

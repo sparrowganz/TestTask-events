@@ -1,5 +1,11 @@
 package kafka
 
+type Config struct {
+	Address string `yaml:"address"`
+	Topic   string `yaml:"events"`
+	Group   string `yaml:"group"`
+}
+
 type kafka struct {
 }
 

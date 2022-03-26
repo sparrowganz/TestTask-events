@@ -1,14 +1,15 @@
-package app
+package web
 
 import (
 	"context"
 	"fmt"
+	"github.com/sparrowganz/TestTask-events/pkg/app"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sparrowganz/TestTask-events/config"
 	pkgEventsRouter "github.com/sparrowganz/TestTask-events/pkg/events/delivery/http"
-	pkgKafka "github.com/sparrowganz/TestTask-events/pkg/message/kafka"
+	pkgEventService "github.com/sparrowganz/TestTask-events/pkg/events/service"
 )
 
 type Main interface {
@@ -17,10 +18,10 @@ type Main interface {
 
 type mainData struct {
 	server http.Server
-	core   Core
+	core   app.Core
 }
 
-func NewMain(config *config.Data, core Core) Main {
+func NewMain(config *config.Data, core app.Core) Main {
 	return &mainData{
 		server: http.Server{
 			Addr:        fmt.Sprintf(":%d", config.Server.Port),
@@ -33,13 +34,18 @@ func NewMain(config *config.Data, core Core) Main {
 
 func (m *mainData) Start() {
 
+	//Init router
 	router := gin.Default()
 	api := router.Group("/api")
 
-	messageBroker := pkgKafka.New()
+	//Init workers Pipeline
+	eventService, err := pkgEventService.New(m.core)
+	if err != nil {
+		m.core.Logger().Fatal("Failed start eventService")
+	}
 
 	//Init events handler
-	eventHandler := pkgEventsRouter.New(messageBroker)
+	eventHandler := pkgEventsRouter.New(m.core.Logger(), eventService)
 	eventHandler.RegisterRoutes(api)
 
 	//Start listening server

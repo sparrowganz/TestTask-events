@@ -1,5 +1,5 @@
 package message
 
 type Broker interface {
-	Send() error
+	Send(value interface{}) error
 }

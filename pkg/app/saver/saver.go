@@ -1,4 +1,4 @@
-package app
+package saver
 
 type Saver interface {
 }

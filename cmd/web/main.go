@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	pkgMainApp "github.com/sparrowganz/TestTask-events/pkg/app/web"
 	"log"
 
 	"os"
@@ -44,7 +45,7 @@ func main() {
 	}()
 
 	//Create APP
-	a := app.NewMain(c, core)
+	a := pkgMainApp.NewMain(c, core)
 	a.Start()
 
 	//Wait stop APP
