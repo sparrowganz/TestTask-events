@@ -1,0 +1,4 @@
+app: main
+server:
+  port: 8080
+  readTimeout: 5s
