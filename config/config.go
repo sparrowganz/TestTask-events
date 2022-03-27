@@ -2,7 +2,7 @@ package config
 
 import (
 	"github.com/pkg/errors"
-	"github.com/sparrowganz/TestTask-events/pkg/database"
+	"github.com/sparrowganz/TestTask-events/pkg/db/clickhouse"
 	"github.com/spf13/viper"
 	"time"
 )
@@ -10,14 +10,14 @@ import (
 const Env = "APP_CONFIG"
 
 type Data struct {
-	App      string          `yml:"app"`
-	Server   Server          `yml:"server"`
-	Database database.Config `yml:"database"`
+	App      string            `yaml:"app"`
+	Server   Server            `yaml:"server"`
+	Database clickhouse.Config `yaml:"database"`
 }
 
 type Server struct {
-	Port        int64         `yml:"port"`
-	ReadTimeOut time.Duration `yml:"readTimeout"`
+	Port        int64         `yaml:"port"`
+	ReadTimeOut time.Duration `yaml:"readTimeout"`
 }
 
 func Parse(pathToConfig string) (*Data, error) {

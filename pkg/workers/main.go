@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/pkg/errors"
 	"github.com/sparrowganz/TestTask-events/pkg/app"
+	"runtime/debug"
 	"sync"
 )
 
@@ -70,11 +71,24 @@ func (w *WorkerGroup) SetResChan(ch chan interface{}) error {
 
 func (w *WorkerGroup) handle() {
 	defer w.wg.Done()
+
 	for val := range w.ChIn {
-		err := w.workerFunc(val, w.ChOut)
-		if err != nil {
-			w.core.Logger().Println("(ERROR) " + errors.Wrap(err, "failed work").Error())
-		}
+		w.do(val)
 	}
 	close(w.ChOut)
+}
+
+func (w *WorkerGroup) do(val interface{}) {
+
+	defer func() {
+		if r := recover(); r != nil {
+			w.core.Logger().Printf("(PANIC) %v %v", r, string(debug.Stack()))
+		}
+	}()
+
+	err := w.workerFunc(val, w.ChOut)
+	if err != nil {
+		w.core.Logger().Println("(ERROR) " + errors.Wrap(err, "failed work").Error())
+	}
+
 }

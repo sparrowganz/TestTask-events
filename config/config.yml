@@ -2,3 +2,9 @@ app: web
 server:
   port: 8080
   readTimeout: 5s
+database:
+  host: localhost
+  port: 8123
+  database: test
+  user: default
+  password:

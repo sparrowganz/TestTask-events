@@ -26,6 +26,8 @@ func main() {
 		flag.Parse()
 	}
 
+	pathToConfigDir = "./config/config.yml"
+
 	// Read configs from environment or config file
 	c, err := config.Parse(pathToConfigDir)
 	if err != nil {
@@ -45,7 +47,10 @@ func main() {
 	}()
 
 	//Create APP
-	a := pkgMainApp.NewMain(c, core)
+	a, err := pkgMainApp.NewMain(c, core)
+	if err != nil {
+		core.Logger().Fatal(err.Error())
+	}
 	a.Start()
 
 	//Wait stop APP

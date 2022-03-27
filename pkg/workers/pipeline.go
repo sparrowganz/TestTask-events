@@ -8,6 +8,7 @@ import (
 type Pipeline interface {
 	Send(val interface{})
 	GetResChan() chan interface{}
+	GetInChan() chan interface{}
 	Start()
 	Stop()
 }
@@ -28,6 +29,10 @@ func NewPipeline(globalWg *sync.WaitGroup, workers ...*WorkerGroup) (Pipeline, e
 		workers: workers,
 	}
 
+	if len(workers) == 1 {
+		return pipeline, nil
+	}
+
 	for idx := range pipeline.workers {
 		//Set current outChan
 		if idx < len(pipeline.workers)-1 {
@@ -40,6 +45,10 @@ func NewPipeline(globalWg *sync.WaitGroup, workers ...*WorkerGroup) (Pipeline, e
 
 func (p *pipeData) Send(val interface{}) {
 	p.workers[0].ChIn <- val
+}
+
+func (p *pipeData) GetInChan() chan interface{} {
+	return p.workers[0].ChIn
 }
 
 func (p *pipeData) GetResChan() chan interface{} {

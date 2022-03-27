@@ -1,39 +1,16 @@
 version: '3.4'
 x-restart-policy: &restart_policy
   restart: unless-stopped
-services:
-  zookeeper:
-    << : *restart_policy
-    image: 'confluentinc/cp-zookeeper:5.5.0'
-    environment:
-      ZOOKEEPER_CLIENT_PORT: '2181'
-      CONFLUENT_SUPPORT_METRICS_ENABLE: 'false'
-      ZOOKEEPER_LOG4J_ROOT_LOGLEVEL: 'WARN'
-      ZOOKEEPER_TOOLS_LOG4J_LOGLEVEL: 'WARN'
-    volumes:
-      - './zookeeper/data:/var/lib/zookeeper/data'
-      - './zookeeper/log:/var/lib/zookeeper/log'
-    ports:
-      - "127.0.0.1:2181:2181"
-      - "127.0.0.1:2888:2888"
-      - "127.0.0.1:3888:3888"
 
-  kafka:
-    depends_on:
-      - zookeeper
-    image: 'confluentinc/cp-kafka:5.5.0'
-    environment:
-      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
-      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka:9092'
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: '1'
-      KAFKA_MESSAGE_MAX_BYTES: '50000000' #50MB or bust
-      KAFKA_MAX_REQUEST_SIZE: '50000000' #50MB on requests apparently too
-      CONFLUENT_SUPPORT_METRICS_ENABLE: 'false'
-      KAFKA_LOG4J_LOGGERS: 'kafka.cluster=WARN,kafka.controller=WARN,kafka.coordinator=WARN,kafka.log=WARN,kafka.server=WARN,kafka.zookeeper=WARN,state.change.logger=WARN'
-      KAFKA_LOG4J_ROOT_LOGLEVEL: 'WARN'
-      KAFKA_TOOLS_LOG4J_LOGLEVEL: 'WARN'
-    volumes:
-      - './kafka/data:/var/lib/kafka/data'
-      - './kafka/logs:/var/lib/kafka/log'
+services:
+  ch_server:
+    << : *restart_policy
+    image: yandex/clickhouse-server:18.10
     ports:
-      - "127.0.0.1:9092:9092"
+      - "8123:8123"
+      - "9000:9000"
+    volumes:
+      - ./db:/var/lib/clickhouse
+    environment:
+
+

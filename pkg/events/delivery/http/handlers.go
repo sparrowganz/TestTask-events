@@ -27,8 +27,6 @@ func (h *Handler) RegisterRoutes(router *gin.RouterGroup) {
 
 // SetEvents POST /api/events
 func (h *Handler) SetEvents(c *gin.Context) {
-	defer c.Request.Body.Close()
-
 	var err error
 
 	scanner := bufio.NewScanner(c.Request.Body)

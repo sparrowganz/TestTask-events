@@ -7,6 +7,10 @@ import (
 	"log"
 )
 
+type App interface {
+	Start()
+}
+
 type Core interface {
 	Logger() *log.Logger
 	Group() *errgroup.Group
