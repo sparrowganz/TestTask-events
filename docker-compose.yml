@@ -11,6 +11,5 @@ services:
       - "9000:9000"
     volumes:
       - ./db:/var/lib/clickhouse
-    environment:
 
 

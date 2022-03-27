@@ -39,3 +39,4 @@ Test Task for SayGames Company. Include web service for getting and saving event
 Все, что не указано явно в задании, остается на твое усмотрение.
 
 ---
+

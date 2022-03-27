@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-//todo implement me
+//TODO set other logger
 func New(appName string) *log.Logger {
 	return log.New(os.Stdout, fmt.Sprintf(" [%s] ", appName), 0)
 }

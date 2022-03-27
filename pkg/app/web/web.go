@@ -20,6 +20,7 @@ type mainData struct {
 	server   http.Server
 	database *clickhouse.Conn
 	core     app.Core
+	workers  config.Workers
 }
 
 func NewMain(config *config.Data, core app.Core) (app.App, error) {
@@ -35,6 +36,7 @@ func NewMain(config *config.Data, core app.Core) (app.App, error) {
 			ReadTimeout: config.Server.ReadTimeOut,
 			ErrorLog:    core.Logger(),
 		},
+		workers:  config.Workers,
 		database: db,
 		core:     core,
 	}, nil
@@ -52,7 +54,7 @@ func (m *mainData) Start() {
 		m.core.Logger().Fatal(err.Error())
 	}
 
-	analyticsPipe, err := eventsPipeline.CreateEventAnalyticsPipeline(m.core, eventRepository)
+	analyticsPipe, err := eventsPipeline.CreateEventAnalyticsPipeline(m.core, m.workers.Analytics, eventRepository)
 	if err != nil {
 		m.core.Logger().Fatal(err.Error())
 	}

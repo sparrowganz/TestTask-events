@@ -8,3 +8,6 @@ database:
   database: test
   user: default
   password:
+workers:
+  default: 1
+  analytics: 2

@@ -9,13 +9,17 @@ import (
 	"sync"
 )
 
-func CreateEventAnalyticsPipeline(core app.Core, repository events.Repository) (workers.Pipeline, error) {
-	//todo set to config
+func CreateEventAnalyticsPipeline(
+	core app.Core,
+	countWorkers int,
+	repository events.Repository,
+) (workers.Pipeline, error) {
+
 	//Create analytics pipe
 	wg := &sync.WaitGroup{}
-	unmarshallJsonWorker := workers.New(wg, core, 1, 10, unmarshallJsonWorkerFunc)
-	setDataWorker := workers.New(wg, core, 1, 10, setFieldsJsonWorkerFunc)
-	saveWorker := workers.New(wg, core, 1, 10,
+	unmarshallJsonWorker := workers.New(wg, core, countWorkers, 10, unmarshallJsonWorkerFunc)
+	setDataWorker := workers.New(wg, core, countWorkers, 10, setFieldsJsonWorkerFunc)
+	saveWorker := workers.New(wg, core, countWorkers, 10,
 		func(val interface{}, resChan chan<- interface{}) error {
 			return repository.Save(val)
 		},
@@ -41,7 +45,7 @@ func unmarshallJsonWorkerFunc(val interface{}, resChan chan<- interface{}) error
 
 	var data = make(map[string]interface{}, 10)
 
-	//todo Faster
+	//Set more faster json unmarshaller (example easyjson)
 	err := json.Unmarshal(val.([]byte), &data)
 	if err != nil {
 		return errors.Wrap(err, "failed unmarshallJsonWorkerFunc")
@@ -51,7 +55,7 @@ func unmarshallJsonWorkerFunc(val interface{}, resChan chan<- interface{}) error
 	return nil
 }
 
-//todo решить проблему с типами
+//Reflection is very bad idea
 func setFieldsJsonWorkerFunc(val interface{}, resChan chan<- interface{}) error {
 	data := val.(map[string]interface{})
 	data["ip"] = "8.8.8.8"
