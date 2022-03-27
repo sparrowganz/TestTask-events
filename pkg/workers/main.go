@@ -21,9 +21,9 @@ type WorkerGroup struct {
 	workerFunc   WorkerFunc
 }
 
-func New(wg *sync.WaitGroup, core app.Core, countWorkers int, bufferSize int, workerFunc WorkerFunc) *WorkerGroup {
+func New(core app.Core, countWorkers int, bufferSize int, workerFunc WorkerFunc) *WorkerGroup {
 	return &WorkerGroup{
-		wg:           wg,
+		wg:           &sync.WaitGroup{},
 		countWorkers: countWorkers,
 		bufferSize:   bufferSize,
 		ChIn:         make(chan interface{}, bufferSize),
@@ -37,15 +37,14 @@ func (w *WorkerGroup) Start() {
 	w.isStarted = true
 	w.wg.Add(w.countWorkers)
 	for i := 0; i < w.countWorkers; i++ {
-		go func() {
-			w.handle()
-		}()
+		go w.handle()
 	}
 	return
 }
 
 func (w *WorkerGroup) Stop() {
-	close(w.ChIn)
+	w.wg.Wait()
+	close(w.ChOut)
 }
 
 func (w *WorkerGroup) Send(val interface{}) error {
@@ -75,7 +74,6 @@ func (w *WorkerGroup) handle() {
 	for val := range w.ChIn {
 		w.do(val)
 	}
-	close(w.ChOut)
 }
 
 func (w *WorkerGroup) do(val interface{}) {

@@ -6,7 +6,6 @@ import (
 	"github.com/sparrowganz/TestTask-events/pkg/app"
 	"github.com/sparrowganz/TestTask-events/pkg/events"
 	"github.com/sparrowganz/TestTask-events/pkg/workers"
-	"sync"
 )
 
 func CreateEventAnalyticsPipeline(
@@ -16,16 +15,15 @@ func CreateEventAnalyticsPipeline(
 ) (workers.Pipeline, error) {
 
 	//Create analytics pipe
-	wg := &sync.WaitGroup{}
-	unmarshallJsonWorker := workers.New(wg, core, countWorkers, 10, unmarshallJsonWorkerFunc)
-	setDataWorker := workers.New(wg, core, countWorkers, 10, setFieldsJsonWorkerFunc)
-	saveWorker := workers.New(wg, core, countWorkers, 10,
+	unmarshallJsonWorker := workers.New(core, countWorkers, 10, unmarshallJsonWorkerFunc)
+	setDataWorker := workers.New(core, countWorkers, 10, setFieldsJsonWorkerFunc)
+	saveWorker := workers.New(core, countWorkers, 10,
 		func(val interface{}, resChan chan<- interface{}) error {
 			return repository.Save(val)
 		},
 	)
 
-	analyticsPipe, err := workers.NewPipeline(wg, unmarshallJsonWorker, setDataWorker, saveWorker)
+	analyticsPipe, err := workers.NewPipeline(unmarshallJsonWorker, setDataWorker, saveWorker)
 	if err != nil {
 		return nil, err
 	}

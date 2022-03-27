@@ -2,7 +2,6 @@ package workers
 
 import (
 	"fmt"
-	"sync"
 )
 
 type Pipeline interface {
@@ -14,18 +13,16 @@ type Pipeline interface {
 }
 
 type pipeData struct {
-	wg      *sync.WaitGroup
 	workers []*WorkerGroup
 }
 
-func NewPipeline(globalWg *sync.WaitGroup, workers ...*WorkerGroup) (Pipeline, error) {
+func NewPipeline(workers ...*WorkerGroup) (Pipeline, error) {
 
 	if len(workers) == 0 {
 		return nil, fmt.Errorf("failed create pipeline: workers not found")
 	}
 
 	pipeline := &pipeData{
-		wg:      globalWg,
 		workers: workers,
 	}
 
@@ -63,5 +60,7 @@ func (p *pipeData) Start() {
 
 func (p pipeData) Stop() {
 	close(p.workers[0].ChIn)
-	p.wg.Wait()
+	for _, worker := range p.workers {
+		worker.Stop()
+	}
 }
