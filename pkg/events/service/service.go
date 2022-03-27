@@ -1,9 +1,9 @@
 package service
 
 import (
-	"github.com/sparrowganz/TestTask-events/pkg/app"
-	"github.com/sparrowganz/TestTask-events/pkg/events"
-	"github.com/sparrowganz/TestTask-events/pkg/workers"
+	"TestTask-events/pkg/app"
+	"TestTask-events/pkg/events"
+	"TestTask-events/pkg/workers"
 )
 
 type Service struct {
@@ -20,6 +20,9 @@ func NewSender(core app.Core, pipe workers.Pipeline) *Service {
 }
 
 func (s Service) SendEvent(event []byte) error {
+	if len(event) == 0 {
+		return nil
+	}
 	s.analyticsPipe.Send(event)
 	return nil
 }

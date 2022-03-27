@@ -3,11 +3,14 @@ server:
   port: 8080
   readTimeout: 5s
 database:
-  host: localhost
+  #host: ch_server
+  host: ch_server
   port: 8123
   database: test
   user: default
   password:
 workers:
+  buffer: 150000
   default: 1
-  analytics: 2
+  analytics: 500
+  db: 70

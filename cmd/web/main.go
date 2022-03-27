@@ -1,19 +1,19 @@
 package main
 
 import (
+	pkgMainApp "TestTask-events/pkg/app/web"
 	"context"
 	"flag"
 	"fmt"
-	pkgMainApp "github.com/sparrowganz/TestTask-events/pkg/app/web"
 	"log"
 
 	"os"
 	"os/signal"
 	"syscall"
 
+	"TestTask-events/config"
+	"TestTask-events/pkg/app"
 	"github.com/pkg/errors"
-	"github.com/sparrowganz/TestTask-events/config"
-	"github.com/sparrowganz/TestTask-events/pkg/app"
 )
 
 func main() {
@@ -25,8 +25,6 @@ func main() {
 		flag.StringVar(&pathToConfigDir, "config", "", "Path to config file")
 		flag.Parse()
 	}
-
-	pathToConfigDir = "./config/config.yml"
 
 	// Read configs from environment or config file
 	c, err := config.Parse(pathToConfigDir)

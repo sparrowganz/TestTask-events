@@ -5,5 +5,5 @@ type Service interface {
 }
 
 type Repository interface {
-	Save(event interface{}) error
+	Save(data interface{}) error
 }

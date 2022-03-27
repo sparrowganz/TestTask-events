@@ -1,9 +1,9 @@
 package workers
 
 import (
+	"TestTask-events/pkg/app"
 	"fmt"
 	"github.com/pkg/errors"
-	"github.com/sparrowganz/TestTask-events/pkg/app"
 	"runtime/debug"
 	"sync"
 )

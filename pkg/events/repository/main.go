@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS events
     param_str String ,
 	ip String, 
 	server_time Datetime
-) engine=Memory ;`)
+) engine=Log ;`)
 	return query.Exec(r.db)
 }
 

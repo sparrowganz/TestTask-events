@@ -1,8 +1,8 @@
 package config
 
 import (
+	"TestTask-events/pkg/db/clickhouse"
 	"github.com/pkg/errors"
-	"github.com/sparrowganz/TestTask-events/pkg/db/clickhouse"
 	"github.com/spf13/viper"
 	"time"
 )
@@ -17,8 +17,10 @@ type Data struct {
 }
 
 type Workers struct {
+	Buffer    int `yaml:"buffer"`
 	Default   int `yaml:"default"`
 	Analytics int `yaml:"analytics"`
+	DB        int `yaml:"db"`
 }
 
 type Server struct {

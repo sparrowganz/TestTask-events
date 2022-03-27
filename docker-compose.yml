@@ -1,15 +1,18 @@
 version: '3.4'
-x-restart-policy: &restart_policy
-  restart: unless-stopped
 
 services:
+  app:
+    restart: always
+    build: .
+    depends_on:
+      - ch_server
+    ports:
+      - "8080:8080"
+
   ch_server:
-    << : *restart_policy
     image: yandex/clickhouse-server:18.10
     ports:
       - "8123:8123"
-      - "9000:9000"
-    volumes:
-      - ./db:/var/lib/clickhouse
+    restart: always
 
 

@@ -1,29 +1,23 @@
 package pipelines
 
 import (
+	"TestTask-events/config"
+	"TestTask-events/pkg/app"
+	"TestTask-events/pkg/workers"
 	"encoding/json"
 	"github.com/pkg/errors"
-	"github.com/sparrowganz/TestTask-events/pkg/app"
-	"github.com/sparrowganz/TestTask-events/pkg/events"
-	"github.com/sparrowganz/TestTask-events/pkg/workers"
 )
 
 func CreateEventAnalyticsPipeline(
 	core app.Core,
-	countWorkers int,
-	repository events.Repository,
+	config config.Workers,
 ) (workers.Pipeline, error) {
 
 	//Create analytics pipe
-	unmarshallJsonWorker := workers.New(core, countWorkers, 10, unmarshallJsonWorkerFunc)
-	setDataWorker := workers.New(core, countWorkers, 10, setFieldsJsonWorkerFunc)
-	saveWorker := workers.New(core, countWorkers, 10,
-		func(val interface{}, resChan chan<- interface{}) error {
-			return repository.Save(val)
-		},
-	)
+	unmarshallJsonWorker := workers.New(core, config.Analytics, config.Buffer, unmarshallJsonWorkerFunc)
+	setDataWorker := workers.New(core, config.Analytics, config.Buffer, setFieldsJsonWorkerFunc)
 
-	analyticsPipe, err := workers.NewPipeline(unmarshallJsonWorker, setDataWorker, saveWorker)
+	analyticsPipe, err := workers.NewPipeline(unmarshallJsonWorker, setDataWorker)
 	if err != nil {
 		return nil, err
 	}

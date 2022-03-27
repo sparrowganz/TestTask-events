@@ -1,10 +1,10 @@
 package http
 
 import (
+	"TestTask-events/pkg/events"
 	"bufio"
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
-	"github.com/sparrowganz/TestTask-events/pkg/events"
 	"log"
 	"net/http"
 )
@@ -43,10 +43,10 @@ func (h *Handler) SetEvents(c *gin.Context) {
 				break
 			}
 
-			startIndex = i
+			startIndex = i + 1
 		}
 
-		for i := 0; i < len(data)-1; i++ {
+		for i := startIndex; i < len(data)-1; i++ {
 			if data[i] == '}' {
 				return i + 2, data[startIndex : i+1], nil
 			}
@@ -55,7 +55,7 @@ func (h *Handler) SetEvents(c *gin.Context) {
 			return 0, nil, nil
 		}
 
-		return 0, data, bufio.ErrFinalToken
+		return 0, data[startIndex:], bufio.ErrFinalToken
 	})
 	for scanner.Scan() {
 

@@ -1,8 +1,8 @@
 package app
 
 import (
+	"TestTask-events/pkg/logger"
 	"context"
-	"github.com/sparrowganz/TestTask-events/pkg/logger"
 	"golang.org/x/sync/errgroup"
 	"log"
 )

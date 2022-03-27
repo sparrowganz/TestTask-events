@@ -1,17 +1,17 @@
 package web
 
 import (
+	"TestTask-events/config"
+	"TestTask-events/pkg/app"
+	pkgDBClickhouse "TestTask-events/pkg/db/clickhouse"
+	pkgEventsRouter "TestTask-events/pkg/events/delivery/http"
+	eventsPipeline "TestTask-events/pkg/events/pipelines"
+	pkgEventRepository "TestTask-events/pkg/events/repository"
+	pkgEventService "TestTask-events/pkg/events/service"
 	"context"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/roistat/go-clickhouse"
-	"github.com/sparrowganz/TestTask-events/config"
-	"github.com/sparrowganz/TestTask-events/pkg/app"
-	pkgDBClickhouse "github.com/sparrowganz/TestTask-events/pkg/db/clickhouse"
-	pkgEventsRouter "github.com/sparrowganz/TestTask-events/pkg/events/delivery/http"
-	eventsPipeline "github.com/sparrowganz/TestTask-events/pkg/events/pipelines"
-	pkgEventRepository "github.com/sparrowganz/TestTask-events/pkg/events/repository"
-	pkgEventService "github.com/sparrowganz/TestTask-events/pkg/events/service"
 	"net/http"
 	"runtime/debug"
 )
@@ -45,7 +45,8 @@ func NewMain(config *config.Data, core app.Core) (app.App, error) {
 func (m *mainData) Start() {
 
 	//Init router
-	router := gin.Default()
+	//Use gin default if want write logs
+	router := gin.New()
 	api := router.Group("/api")
 
 	eventRepository := pkgEventRepository.New(m.database)
@@ -54,7 +55,7 @@ func (m *mainData) Start() {
 		m.core.Logger().Fatal(err.Error())
 	}
 
-	analyticsPipe, err := eventsPipeline.CreateEventAnalyticsPipeline(m.core, m.workers.Analytics, eventRepository)
+	analyticsPipe, err := eventsPipeline.CreateEventAnalyticsPipeline(m.core, m.workers)
 	if err != nil {
 		m.core.Logger().Fatal(err.Error())
 	}
