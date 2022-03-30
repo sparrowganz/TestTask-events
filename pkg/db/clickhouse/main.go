@@ -2,7 +2,8 @@ package clickhouse
 
 import (
 	"fmt"
-	"github.com/roistat/go-clickhouse"
+	"github.com/jmoiron/sqlx"
+	_ "github.com/mailru/go-clickhouse/v2"
 )
 
 type Config struct {
@@ -13,24 +14,20 @@ type Config struct {
 	Password string `yaml:"password"`
 }
 
-func New(cfg Config) (*clickhouse.Conn, error) {
-
-	transport := clickhouse.NewHttpTransport()
-	conn := clickhouse.NewConn(fmt.Sprintf("%s:%d", cfg.Host, cfg.Port), transport)
-	err := conn.Ping()
+func New(cfg Config) (*sqlx.DB, error) {
+	c, err := sqlx.Open("chhttp", fmt.Sprintf("http://%s:%d/%s", cfg.Host, cfg.Port, cfg.Database))
 	if err != nil {
 		return nil, err
 	}
 
-	err = initDB(conn)
-	if err != nil {
+	if err := c.Ping(); err != nil {
 		return nil, err
 	}
 
-	return conn, nil
+	return c, initDB(c)
 }
 
-func initDB(conn *clickhouse.Conn) error {
-	q := clickhouse.NewQuery(`CREATE DATABASE IF NOT EXISTS test`)
-	return q.Exec(conn)
+func initDB(conn *sqlx.DB) error {
+	_, err := conn.Exec(`CREATE DATABASE IF NOT EXISTS test`)
+	return err
 }

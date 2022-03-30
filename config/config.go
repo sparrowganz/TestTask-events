@@ -13,14 +13,6 @@ type Data struct {
 	App      string            `yaml:"app"`
 	Server   Server            `yaml:"server"`
 	Database clickhouse.Config `yaml:"database"`
-	Workers  Workers           `yaml:"workers"`
-}
-
-type Workers struct {
-	Buffer    int `yaml:"buffer"`
-	Default   int `yaml:"default"`
-	Analytics int `yaml:"analytics"`
-	DB        int `yaml:"db"`
 }
 
 type Server struct {

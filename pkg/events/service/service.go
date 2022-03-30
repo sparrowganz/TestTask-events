@@ -1,28 +1,22 @@
 package service
 
 import (
-	"TestTask-events/pkg/app"
 	"TestTask-events/pkg/events"
-	"TestTask-events/pkg/workers"
 )
 
 type Service struct {
-	core          app.Core
-	analyticsPipe workers.Pipeline
-	repo          events.Repository
+	repo events.Repository
 }
 
-func NewSender(core app.Core, pipe workers.Pipeline) *Service {
+func NewSender(repo events.Repository) *Service {
 	return &Service{
-		core:          core,
-		analyticsPipe: pipe,
+		repo: repo,
 	}
 }
 
-func (s Service) SendEvent(event []byte) error {
-	if len(event) == 0 {
-		return nil
-	}
-	s.analyticsPipe.Send(event)
+func (s Service) SendEvent(event *events.Event) error {
+	event.IP = "8.8.8.8"
+	event.ServerTime = "2020-12-01 23:53:00"
+	s.repo.Collect(event)
 	return nil
 }

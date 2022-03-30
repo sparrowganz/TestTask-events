@@ -16,4 +16,5 @@ stop:
 
 stress-test:
 	@echo starting stress test
-	ab -p body.txt -T application/json -c 300 -n 5000 http://localhost:8080/api/events
+	docker run --rm -i -t -v `pwd`:`pwd` -w `pwd` --network="testtask-events_default" jordi/ab \
+   -k -n 20000 -c 500 -p body.txt "http://app:8080/api/events"

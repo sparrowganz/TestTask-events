@@ -42,60 +42,58 @@ Test Task for SayGames Company. Include web service for getting and saving event
 
 ## Резюмируя
 Данное решение не лишено огрехов и ошибок и носит демонстративный характер.
-Таких как: 
-- Черезмерное использование приведения типов.
-- Одинарные запросы в clickhouse (max 100 дальше ошибках)
-- итд
 
-В  начале было в планах сделать все через кластер kafka и балансировку на воркеры. 
-Но таска же на golang разработчика.😂
+db/cache - что-то на подобие apache kafka (для сохранности евентов при завершении)
 
-В этом тестовом задании я постарался показать свои умения организовывать и писать код, а так же возможность мыслить нестандартно.
+Текущий проект включает в себя:
+- grace shutdown через errgroup
+- Использование концепции ядра приложения
+- DDD и clean arch
+- ...
 
-На моей локальной машине сервер выдержал предполагаемую нагрузку. (Не считая потери нескольих евентов)
+На моей локальной машине сервер выдержал предполагаемую нагрузку.
 
 ```Server Software:        
-Server Hostname:        localhost
+Server Hostname:        app
 Server Port:            8080
 
 Document Path:          /api/events
 Document Length:        0 bytes
 
-Concurrency Level:      300
-Time taken for tests:   13.432 seconds
-Complete requests:      5000
-Failed requests:        10
-   (Connect: 10, Receive: 0, Length: 0, Exceptions: 0)
-Total transferred:      375000 bytes
-Total body sent:        32985000
+Concurrency Level:      500
+Time taken for tests:   23.753 seconds
+Complete requests:      20000
+Failed requests:        0
+Keep-Alive requests:    20000
+Total transferred:      1980000 bytes
+Total body sent:        132180000
 HTML transferred:       0 bytes
-Requests per second:    372.24 [#/sec] (mean)
-Time per request:       805.929 [ms] (mean)
-Time per request:       2.686 [ms] (mean, across all concurrent requests)
-Transfer rate:          27.26 [Kbytes/sec] received
-                        2398.12 kb/s sent
-                        2425.39 kb/s total
+Requests per second:    842.01 [#/sec] (mean)
+Time per request:       593.815 [ms] (mean)
+Time per request:       1.188 [ms] (mean, across all concurrent requests)
+Transfer rate:          81.41 [Kbytes/sec] received
+                        5434.44 kb/s sent
+                        5515.84 kb/s total
+
 
 Connection Times (ms)
               min  mean[+/-sd] median   max
-Connect:        0    2  12.2      0     102
-Processing:     8  785 350.3    750    2338
-Waiting:        7  735 322.2    702    2314
-Total:          9  788 348.6    752    2338
+Connect:        0    2  14.4      0     139
+Processing:     0  585 620.0    470    7065
+Waiting:        0  584 619.9    469    7065
+Total:          0  587 618.8    471    7065
 
 Percentage of the requests served within a certain time (ms)
-  50%    752
-  66%    930
-  75%   1002
-  80%   1070
-  90%   1228
-  95%   1385
-  98%   1643
-  99%   1735
- 100%   2338 (longest request)
+  50%    471
+  66%    646
+  75%    800
+  80%    938
+  90%   1384
+  95%   1807
+  98%   2417
+  99%   2786
+ 100%   7065 (longest request)
 ```
-Полная обработка данных заняла примерно 1мин (долетали евенты в базу)
-После теста появились 149939 новых евента в базе
 
 
 

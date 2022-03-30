@@ -9,8 +9,3 @@ database:
   database: test
   user: default
   password:
-workers:
-  buffer: 150000
-  default: 1
-  analytics: 500
-  db: 70
